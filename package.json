@@ -21,6 +21,7 @@
     "apexcharts-clevision": "3.28.5",
     "axios": "1.4.0",
     "axios-mock-adapter": "1.21.4",
+    "bootstrap": "^5.3.1",
     "chart.js": "4.3.0",
     "jwt-decode": "3.1.2",
     "pinia": "2.0.35",

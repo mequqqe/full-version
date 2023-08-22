@@ -1,228 +1,191 @@
 <script setup lang="ts">
-import safeBoxWithGoldenCoin from '@images/misc/3d-safe-box-with-golden-dollar-coins.png'
-import spaceRocket from '@images/misc/3d-space-rocket-with-smoke.png'
-import dollarCoinPiggyBank from '@images/misc/dollar-coins-flying-pink-piggy-bank.png'
-
-interface Pricing {
-  title?: string
-  xs?: number | string
-  sm?: number | string
-  md?: string | number
-  lg?: string | number
-  xl?: string | number
+interface Transaction {
+  date: string
+  operation: string
+  buyer: string
+  cost: number
+  payment: string
 }
 
-const props = defineProps<Pricing>()
+const transactions: Transaction[] = [
+  {
+    category: '3D принтер',
+    product: '3D принтер Photon',
+    optResidue: 5,
+    currentBalance: 5,
+    requiredQuantity: 5,
+  },
+  {
+    category: '3D принтер',
+    product: '3D принтер Photon',
+    optResidue: 5,
+    currentBalance: 5,
+    requiredQuantity: 5,
+  },
 
-const annualMonthlyPlanPriceToggler = ref(true)
-
-const pricingPlans = [
-  {
-    name: 'Basic',
-    tagLine: 'A simple start for everyone',
-    logo: dollarCoinPiggyBank,
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    isPopular: false,
-    current: true,
-    features: [
-      '100 responses a month',
-      'Unlimited forms and surveys',
-      'Unlimited fields',
-      'Basic form creation tools',
-      'Up to 2 subdomains',
-    ],
-  },
-  {
-    name: 'Standard',
-    tagLine: 'For small to medium businesses',
-    logo: safeBoxWithGoldenCoin,
-    monthlyPrice: 42,
-    yearlyPrice: 460,
-    isPopular: true,
-    current: false,
-    features: [
-      'Unlimited responses',
-      'Unlimited forms and surveys',
-      'Instagram profile page',
-      'Google Docs integration',
-      'Custom “Thank you” page',
-    ],
-  },
-  {
-    name: 'Enterprise',
-    tagLine: 'Solution for big organizations',
-    logo: spaceRocket,
-    monthlyPrice: 84,
-    yearlyPrice: 690,
-    isPopular: false,
-    current: false,
-    features: [
-      'PayPal payments',
-      'Logic Jumps',
-      'File upload with 5GB storage',
-      'Custom domain support',
-      'Stripe integration',
-    ],
-  },
+  // ... (other transactions)
 ]
 </script>
 
 <template>
-  <!-- 👉 Title and subtitle -->
-  <div class="text-center">
-    <h4 class="text-h2 pricing-title mb-4">
-      {{ props.title ? props.title : 'Pricing Plans' }}
-    </h4>
-    <p class="mb-0">
-      All plans include 40+ advanced tools and features to boost your product.
-    </p>
-    <p>Choose the best plan to fit your needs.</p>
-  </div>
-
-  <!-- 👉 Annual and monthly price toggler -->
-
-  <div class="d-flex align-center justify-center mx-auto my-10">
-    <VLabel
-      for="pricing-plan-toggle"
-      class="me-2"
-    >
-      Monthly
-    </VLabel>
-
-    <div class="position-relative">
-      <VSwitch
-        id="pricing-plan-toggle"
-        v-model="annualMonthlyPlanPriceToggler"
-        label="Annual"
-      />
-
-      <div class="save-upto-chip position-absolute align-center d-none d-md-flex gap-1">
-        <VIcon
-          icon="tabler-corner-left-down"
-          class="flip-in-rtl"
-        />
-        <VChip
-          label
-          color="primary"
-        >
-          Save up to 10%
-        </VChip>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECTION pricing plans -->
-  <VRow>
-    <VCol
-      v-for="plan in pricingPlans"
-      :key="plan.logo"
-      v-bind="props"
-      cols="12"
-    >
-      <!-- 👉  Card -->
-      <VCard
-        flat
-        border
-        :class="plan.isPopular ? 'border-primary border-opacity-100' : ''"
+  <div>
+    <div class="button-container">
+      <button
+        class="icon-button"
+        @click="handleButtonClick('add')"
       >
-        <VCardText
-          style="block-size: 4.125rem;"
-          class="text-end"
+        <VIcon
+          size="17"
+          icon="tabler-repeat"
+        />
+      </button>
+      <button
+        class="icon-button"
+        @click="handleButtonClick('edit')"
+      >
+        <VIcon
+          size="17"
+          icon="tabler-circle-plus"
+        />
+      </button>
+      <button
+        class="icon-button"
+        @click="handleButtonClick('delete')"
+      >
+        <VIcon
+          size="17"
+          icon="tabler-list"
+        />
+      </button>
+    </div>
+
+    <div class="button-container">
+      <button
+        class="date-button"
+        @click="selectDateRange('today')"
+      >
+        C
+      </button>
+      <button
+        class="date-button"
+        @click="selectDateRange('all')"
+      >
+        B
+      </button>
+      <button
+        class="nav-button"
+        @click="navigateDays(-1)"
+      >
+        -
+      </button>
+      <button
+        class="nav-button"
+        @click="navigateDays(1)"
+      >
+        +
+      </button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>КАТЕГОРИЯ</th>
+          <th>ТОВАР</th>
+          <th>ОПТИМАЛЬНЫЙ ОСТАТОК </th>
+          <th>ТЕКУЩИЙ ОСТАТОК </th>
+          <th>НЕОБХОДИМОЕ КОЛ-ВО</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in transactions"
+          :key="index"
         >
-          <!-- 👉 Popular -->
-          <VChip
-            v-show="plan.isPopular"
-            label
-            color="primary"
-            size="small"
-          >
-            Popular
-          </VChip>
-        </VCardText>
-
-        <!-- 👉 Plan logo -->
-        <VCardText class="text-center">
-          <VImg
-            :height="140"
-            :src="plan.logo"
-            class="mx-auto mb-5"
-          />
-
-          <!-- 👉 Plan name -->
-          <h5 class="text-h5 mb-2">
-            {{ plan.name }}
-          </h5>
-          <p class="mb-0">
-            {{ plan.tagLine }}
-          </p>
-        </VCardText>
-
-        <!-- 👉 Plan price  -->
-        <VCardText class="position-relative text-center">
-          <div class="d-flex justify-center align-center">
-            <sup class="text-sm font-weight-medium me-1">$</sup>
-            <h1 class="text-5xl font-weight-medium text-primary">
-              {{ annualMonthlyPlanPriceToggler ? Math.floor(Number(plan.yearlyPrice) / 12) : plan.monthlyPrice }}
-            </h1>
-            <sub class="text-sm font-weight-medium ms-1 mt-4">/month</sub>
-          </div>
-
-          <!-- 👉 Annual Price -->
-          <span
-            v-show="annualMonthlyPlanPriceToggler"
-            class="position-absolute text-caption font-weight-medium mt-1"
-            style="inset-inline: 0;"
-          >
-            {{ plan.yearlyPrice === 0 ? 'free' : `USD ${plan.yearlyPrice}/Year` }}
-          </span>
-        </VCardText>
-
-        <!-- 👉 Plan features -->
-        <VCardText class="mt-5">
-          <VList class="card-list">
-            <VListItem
-              v-for="feature in plan.features"
-              :key="feature"
-            >
-              <template #prepend>
-                <VIcon
-                  :size="14"
-                  icon="tabler-circle"
-                  class="me-3"
-                />
-              </template>
-
-              <VListItemTitle>
-                {{ feature }}
-              </VListItemTitle>
-            </VListItem>
-          </VList>
-        </VCardText>
-
-        <!-- 👉 Plan actions -->
-        <VCardActions>
-          <VBtn
-            block
-            :color="plan.current ? 'success' : 'primary'"
-            :variant="plan.isPopular ? 'elevated' : 'tonal'"
-          >
-            {{ plan.yearlyPrice === 0 ? 'Your Current Plan' : 'Upgrade' }}
-          </VBtn>
-        </VCardActions>
-      </VCard>
-    </VCol>
-  </VRow>
-  <!-- !SECTION  -->
+          <td>{{ item.category }}</td>
+          <td>{{ item.product }}</td>
+          <td>{{ item.optResidue }}</td>
+          <td>{{ item.currentBalance }}</td>
+          <td>{{ item.requiredQuantity }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
-<style lang="scss" scoped>
-.card-list {
-  --v-card-list-gap: 0.75rem;
+<style scoped>
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
-.save-upto-chip {
-  inset-block-start: -1.5rem;
-  inset-inline-end: -7rem;
+table {
+  border-collapse: collapse;
+  inline-size: 100%;
+}
+
+th,
+td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: start;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.button-container {
+  display: flex;
+  align-items: center; /* Vertically align items */
+  padding: 6px;
+  gap: 10px;
+}
+
+.icon-button {
+  border: none;
+  border-radius: 4px;
+  background-color: #7367f0;
+  color: white;
+  cursor: pointer;
+  padding-block: 8px;
+  padding-inline: 12px;
+  transition: background-color 0.3s;
+}
+
+.icon-button:hover {
+  background-color: #5e59d4;
+}
+
+.icon-button i {
+  font-size: 18px;
+}
+
+.date-button {
+  border: none;
+  background-color: #5e59d4;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.date-button:hover {
+  color: #5e59d4;
+}
+
+.nav-button {
+  padding: 0;
+  border: none;
+  margin: 0;
+  background-color: #5e59d4;
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+  transition: color 0.3s;
+}
+
+.nav-button:hover {
+  color: #d45959;
 }
 </style>

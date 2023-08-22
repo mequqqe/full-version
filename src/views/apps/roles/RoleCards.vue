@@ -1,312 +1,275 @@
 <script setup lang="ts">
-import avatar1 from '@images/avatars/avatar-1.png'
-import avatar10 from '@images/avatars/avatar-10.png'
-import avatar2 from '@images/avatars/avatar-2.png'
-import avatar3 from '@images/avatars/avatar-3.png'
-import avatar4 from '@images/avatars/avatar-4.png'
-import avatar5 from '@images/avatars/avatar-5.png'
-import avatar6 from '@images/avatars/avatar-6.png'
-import avatar7 from '@images/avatars/avatar-7.png'
-import avatar8 from '@images/avatars/avatar-8.png'
-import avatar9 from '@images/avatars/avatar-9.png'
-import girlUsingMobile from '@images/pages/girl-using-mobile.png'
-
-interface Permission {
-  name: string
-  read: boolean
-  write: boolean
-  create: boolean
+interface Transaction {
+  date: string
+  operation: string
+  buyer: string
+  cost: number
+  payment: string
 }
 
-interface RoleDetails {
-  name: string
-  permissions: Permission[]
-}
-
-interface Roles {
-  role: string
-  users: string[]
-  details: RoleDetails
-}
-
-// 👉 Roles List
-const roles = ref<Roles[]>([
+const employeeData = [
   {
-    role: 'Administrator',
-    users: [avatar1, avatar2, avatar3, avatar4],
-    details: {
-      name: 'Administrator',
-      permissions: [
-        {
-          name: 'User Management',
-          read: true,
-          write: true,
-          create: true,
-        },
-        {
-          name: 'Disputes Management',
-          read: true,
-          write: true,
-          create: true,
-        },
-        {
-          name: 'API Control',
-          read: true,
-          write: true,
-          create: true,
-        },
-      ],
-    },
+    employee: 'John Smith',
+    product: 'Product A',
+    serialNumber: '12345',
+    quantity: 5,
+    cost: 250,
   },
   {
-    role: 'Manager',
-    users: [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7],
-    details: {
-      name: 'Manager',
-      permissions: [
-        {
-          name: 'Reporting',
-          read: true,
-          write: true,
-          create: false,
-        },
-        {
-          name: 'Payroll',
-          read: true,
-          write: true,
-          create: true,
-        },
-        {
-          name: 'User Management',
-          read: true,
-          write: true,
-          create: true,
-        },
-      ],
-    },
+    employee: 'Jane Doe',
+    product: 'Product B',
+    serialNumber: '67890',
+    quantity: 3,
+    cost: 180,
+  },
+
+  // ... (other employee data)
+]
+
+const transactions: Transaction[] = [
+  {
+    date: '2023-08-01',
+    operation: 'Purchase',
+    buyer: 'John Doe',
+    cost: 100,
+    payment: 'Credit Card',
   },
   {
-    role: 'Users',
-    users: [avatar1, avatar2, avatar3, avatar4, avatar5],
-    details: {
-      name: 'Users',
-      permissions: [
-        {
-          name: 'User Management',
-          read: true,
-          write: false,
-          create: false,
-        },
-        {
-          name: 'Content Management',
-          read: true,
-          write: false,
-          create: false,
-        },
-        {
-          name: 'Disputes Management',
-          read: true,
-          write: false,
-          create: false,
-        },
-        {
-          name: 'Database Management',
-          read: true,
-          write: false,
-          create: false,
-        },
-      ],
-    },
+    date: '2023-08-05',
+    operation: 'Refund',
+    buyer: 'Jane Smith',
+    cost: -50,
+    payment: 'PayPal',
   },
-  {
-    role: 'Support',
-    users: [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6],
-    details: {
-      name: 'Support',
-      permissions: [
-        {
-          name: 'Repository Management',
-          read: true,
-          write: true,
-          create: false,
-        },
-        {
-          name: 'Content Management',
-          read: true,
-          write: true,
-          create: false,
-        },
-        {
-          name: 'Database Management',
-          read: true,
-          write: true,
-          create: false,
-        },
-      ],
-    },
-  },
-  {
-    role: 'Restricted User',
-    users: [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10],
-    details: {
-      name: 'Restricted User',
-      permissions: [
-        {
-          name: 'User Management',
-          read: true,
-          write: false,
-          create: false,
-        },
-        {
-          name: 'Content Management',
-          read: true,
-          write: false,
-          create: false,
-        },
-        {
-          name: 'Disputes Management',
-          read: true,
-          write: false,
-          create: false,
-        },
-        {
-          name: 'Database Management',
-          read: true,
-          write: false,
-          create: false,
-        },
-      ],
-    },
-  },
-])
 
-const isRoleDialogVisible = ref(false)
-
-const roleDetail = ref<RoleDetails>()
-
-const isAddRoleDialogVisible = ref(false)
-
-const editPermission = (value: RoleDetails) => {
-  isRoleDialogVisible.value = true
-  roleDetail.value = value
-}
+  // ... (other transactions)
+]
 </script>
 
 <template>
-  <VRow>
-    <!-- 👉 Roles -->
-    <VCol
-      v-for="item in roles"
-      :key="item.role"
-      cols="12"
-      sm="6"
-      lg="4"
+  <div class="search-container">
+    <input
+      v-model="searchQuery"
+      type="text"
+      placeholder="Поиск..."
+      class="search-input"
     >
-      <VCard>
-        <VCardText class="d-flex align-center pb-1">
-          <span>Total {{ item.users.length }} users</span>
-
-          <VSpacer />
-
-          <div class="v-avatar-group">
-            <template
-              v-for="(user, index) in item.users"
-              :key="user"
-            >
-              <VAvatar
-                v-if="item.users.length > 4 && item.users.length !== 4 && index < 3"
-                size="36"
-                :image="user"
-              />
-
-              <VAvatar
-                v-if="item.users.length === 4"
-                size="36"
-                :image="user"
-              />
-            </template>
-            <VAvatar
-              v-if="item.users.length > 4"
-              :color="$vuetify.theme.current.dark ? '#4A5072' : '#f6f6f7'"
-            >
-              <span>
-                +{{ item.users.length - 3 }}
-              </span>
-            </VAvatar>
-          </div>
-        </VCardText>
-
-        <VCardText class="pb-5">
-          <h4 class="text-h4">
-            {{ item.role }}
-          </h4>
-          <div class="d-flex align-center">
-            <a
-              href="javascript:void(0)"
-              @click="editPermission(item.details)"
-            >
-              Edit Role
-            </a>
-
-            <VSpacer />
-            <VBtn
-              icon
-              color="disabled"
-              variant="text"
-              size="x-small"
-            >
-              <VIcon
-                size="24"
-                icon="tabler-copy"
-              />
-            </VBtn>
-          </div>
-        </VCardText>
-      </VCard>
-    </VCol>
-
-    <!-- 👉 Add New Role -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
-      <VCard
-        class="h-100"
-        :ripple="false"
-        @click="isAddRoleDialogVisible = true"
+  </div><div>
+    <div class="button-container">
+      <button
+        class="icon-button"
+        @click="handleButtonClick('add')"
       >
-        <VRow
-          no-gutters
-          class="h-100"
+        <VIcon
+          size="17"
+          icon="tabler-repeat"
+        />
+      </button>
+      <button
+        class="icon-button"
+        @click="handleButtonClick('edit')"
+      >
+        <VIcon
+          size="17"
+          icon="tabler-circle-plus"
+        />
+      </button>
+      <button
+        class="icon-button"
+        @click="handleButtonClick('delete')"
+      >
+        <VIcon
+          size="17"
+          icon="tabler-list"
+        />
+      </button>
+    </div>
+
+    <!-- Другие кнопки с выбором диапазона дат могут быть добавлены здесь -->
+  </div>
+
+  <div class="button-container">
+    <!-- Date range selection buttons -->
+    <button
+      class="date-button"
+      @click="selectDateRange('today')"
+    >
+      C
+    </button>
+    <button
+      class="date-button"
+      @click="selectDateRange('all')"
+    >
+      B
+    </button>
+    <!-- Add and subtract day buttons -->
+    <button
+      class="nav-button"
+      @click="navigateDays(-1)"
+    >
+      -
+    </button>
+    <button
+      class="nav-button"
+      @click="navigateDays(1)"
+    >
+      +
+    </button>
+  </div>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>НОМЕР</th>
+          <th>ДАТА</th>
+          <th>ОПЕРАЦИЯ </th>
+          <th>ПОКУПАТЕЛЬ</th>
+          <th>СТОИМОСТЬ</th>
+          <th>ОПЛАТА</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in transactions"
+          :key="index"
         >
-          <VCol
-            cols="5"
-            class="d-flex flex-column justify-end align-center mt-5"
-          >
-            <img
-              width="85"
-              :src="girlUsingMobile"
-            >
-          </VCol>
+          <td>{{ index + 1 }}</td>
+          <td>{{ item.date }}</td>
+          <td>{{ item.operation }}</td>
+          <td>{{ item.buyer }}</td>
+          <td>{{ item.cost }}</td>
+          <td>{{ item.payment }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-          <VCol cols="7">
-            <VCardText
-              class="d-flex flex-column align-end justify-end gap-2 h-100"
-              style="text-align: end;"
-            >
-              <VBtn>Add New Role</VBtn>
-              <span>Add role, if it doesn't exist.</span>
-            </VCardText>
-          </VCol>
-        </VRow>
-      </VCard>
-      <AddEditRoleDialog v-model:is-dialog-visible="isAddRoleDialogVisible" />
-    </VCol>
-  </VRow>
+  <div class="table-spacing" />
 
-  <AddEditRoleDialog
-    v-model:is-dialog-visible="isRoleDialogVisible"
-    v-model:role-permissions="roleDetail"
-  />
+  <!-- Main transactions table -->
+  <div>
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>СОТРУДНИК</th>
+          <th>ТОВАР</th>
+          <th>КОД/СЕРИЙНИК</th>
+          <th>КОЛ-ВО</th>
+          <th>СТОИМОСТЬ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Loop through transactions data -->
+        <tr
+          v-for="(item, index) in transactions"
+          :key="index"
+        >
+          <td>{{ index + 1 }}</td>
+          <td>{{ item.date }}</td>
+          <td>{{ item.operation }}</td>
+          <td>{{ item.buyer }}</td>
+          <td>{{ item.cost }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
+
+<style scoped>
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.search-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-button:hover {
+  background-color: #3f3ca6;
+}
+
+table {
+  border-collapse: collapse;
+  inline-size: 100%;
+}
+
+th,
+td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: start;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.button-container {
+  display: flex;
+  align-items: center; /* Vertically align items */
+  padding: 6px;
+  gap: 10px;
+}
+
+.icon-button {
+  border: none;
+  border-radius: 4px;
+  background-color: #7367f0;
+  color: white;
+  cursor: pointer;
+  padding-block: 8px;
+  padding-inline: 12px;
+  transition: background-color 0.3s;
+}
+
+.icon-button:hover {
+  background-color: #5e59d4;
+}
+
+.table-spacing {
+  block-size: 40px; /* Adjust the spacing height as needed */
+}
+
+.icon-button i {
+  font-size: 18px;
+}
+
+.date-button {
+  border: none;
+  background-color: #5e59d4;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.date-button:hover {
+  color: #5e59d4;
+}
+
+.nav-button {
+  padding: 0;
+  border: none;
+  margin: 0;
+  background-color: #5e59d4;
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+  transition: color 0.3s;
+}
+
+.nav-button:hover {
+  color: #d45959;
+}
+
+.button-separator {
+  background-color: #f06790;
+  block-size: 1px;
+  margin-block: 8px;
+  margin-inline: 0;
+}
+</style>

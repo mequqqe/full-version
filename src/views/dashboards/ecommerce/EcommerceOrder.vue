@@ -1,223 +1,135 @@
-<script setup lang="ts">
-const currentActiveTab = ref('New')
-
-const orders = [
-  {
-    tabName: 'New',
-    timeline1: [
-      {
-        icon: 'tabler-circle-check',
-        type: 'SENDER',
-        name: 'Myrtle Ullrich',
-        address: '101 Boulder, California(CA), 95959',
-      },
-      {
-        icon: 'tabler-map-pin',
-        type: 'RECEIVER',
-        name: 'Barry Schowalter',
-        address: '939 Orange, California(CA),92118',
-      },
-
-    ],
-    timeline2: [
-      {
-        icon: 'tabler-circle-check',
-        type: 'SENDER',
-        name: 'Veronica Herman',
-        address: '162 Windsor, California(CA), 95492',
-      },
-      {
-        icon: 'tabler-map-pin',
-        type: 'RECEIVER',
-        name: 'Helen Jacobs',
-        address: '487 Sunset, California(CA), 94043',
-      },
-
-    ],
-  },
-  {
-    tabName: 'Preparing',
-    timeline1: [
-      {
-        icon: 'tabler-circle-check',
-        type: 'SENDER',
-        name: 'Barry Schowalter',
-        address: '939 Orange, California(CA),92118',
-      },
-      {
-        icon: 'tabler-map-pin',
-        type: 'RECEIVER',
-        name: 'Myrtle Ullrich',
-        address: '101 Boulder, California(CA), 95959',
-      },
-
-    ],
-    timeline2: [
-      {
-        icon: 'tabler-circle-check',
-        type: 'SENDER',
-        name: 'Veronica Herman',
-        address: '162 Windsor, California(CA), 95492',
-      },
-      {
-        icon: 'tabler-map-pin',
-        type: 'RECEIVER',
-        name: 'Helen Jacobs',
-        address: '487 Sunset, California(CA), 94043',
-      },
-
-    ],
-  },
-  {
-    tabName: 'Shipping',
-    timeline1: [
-      {
-        icon: 'tabler-circle-check',
-        type: 'SENDER',
-        name: 'Veronica Herman',
-        address: '101 Boulder, California(CA), 95959',
-      },
-      {
-        icon: 'tabler-map-pin',
-        type: 'RECEIVER',
-        name: 'Barry Schowalter',
-        address: '939 Orange, California(CA),92118',
-      },
-
-    ],
-    timeline2: [
-      {
-        icon: 'tabler-circle-check',
-        type: 'SENDER',
-        name: 'Myrtle Ullrich',
-        address: '162 Windsor, California(CA), 95492',
-      },
-      {
-        icon: 'tabler-map-pin',
-        type: 'RECEIVER',
-        name: 'Helen Jacobs',
-        address: '487 Sunset, California(CA), 94043',
-      },
-
-    ],
-  },
-]
-
-const moreList = [
-  { title: 'Refresh', value: 'refresh' },
-  { title: 'Download', value: 'Download' },
-  { title: 'View All', value: 'View All' },
-]
-</script>
-
 <template>
-  <VCard>
-    <VCardItem class="pb-0">
-      <VCardTitle>Sales by Orders</VCardTitle>
-      <VCardSubtitle>62 Deliveries in Progress</VCardSubtitle>
-
-      <template #append>
-        <div class="mt-n4 me-n2">
-          <MoreBtn :menu-list="moreList" />
+  <div class="container">
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label class="form-label">Implementation</label>
+          <input
+            type="text"
+            class="form-control"
+          >
+          <label class="form-label">Date</label>
+          <input
+            type="date"
+            class="form-control"
+          >
+          <label class="form-label">Buyer</label>
+          <div class="d-flex align-items-center">
+            <select
+              class="form-select me-2"
+              aria-label="Select a buyer"
+            >
+              <option selected>
+                IBM
+              </option>
+              <option value="1">
+                Microsoft
+              </option>
+              <option value="2">
+                Nvidia
+              </option>
+              <option value="3">
+                AMD
+              </option>
+            </select>
+            <button class="btn btn-primary">
+              <i class="fas fa-user" />
+            </button>
+          </div>
         </div>
-      </template>
-    </VCardItem>
-
-    <VTabs
-      v-model="currentActiveTab"
-      grow
-    >
-      <VTab
-        v-for="order in orders"
-        :key="order.tabName"
-        :value="order.tabName"
-      >
-        {{ order.tabName }}
-      </VTab>
-    </VTabs>
-
-    <VCardText>
-      <VWindow
-        v-model="currentActiveTab"
-        class="disable-tab-transition"
-      >
-        <VWindowItem
-          v-for="order in orders"
-          :key="order.tabName"
-          :value="order.tabName"
-        >
-          <VTimeline
-            side="end"
-            align="start"
-            truncate-line="both"
-            density="compact"
-            class="v-timeline-density-compact v-timeline-icon-only"
-          >
-            <VTimelineItem
-              v-for="item in order.timeline1"
-              :key="item.icon"
-              fill-dot
-              size="small"
-            >
-              <template #icon>
-                <VIcon
-                  size="20"
-                  :icon="item.icon"
-                  :color="item.type === 'SENDER' ? 'success' : 'primary'"
-                />
-              </template>
-
-              <p :class="`text-sm font-weight-medium text-${item.type === 'SENDER' ? 'success' : 'primary'} mb-0`">
-                {{ item.type }}
-              </p>
-              <p class="app-timeline-title mb-0">
-                {{ item.name }}
-              </p>
-              <p class="text-disabled mb-0">
-                {{ item.address }}
-              </p>
-            </VTimelineItem>
-          </VTimeline>
-
-          <VDivider
-            class="my-5"
-            style="border-style: dashed;"
-          />
-
-          <VTimeline
-            side="end"
-            align="start"
-            truncate-line="both"
-            density="compact"
-            class="v-timeline-density-compact v-timeline-icon-only"
-          >
-            <VTimelineItem
-              v-for="item in order.timeline2"
-              :key="item.icon"
-              fill-dot
-              size="small"
-            >
-              <template #icon>
-                <VIcon
-                  size="20"
-                  :icon="item.icon"
-                  :color="item.type === 'SENDER' ? 'success' : 'primary'"
-                />
-              </template>
-              <p :class="`text-sm font-weight-medium text-${item.type === 'SENDER' ? 'success' : 'primary'} mb-0`">
-                {{ item.type }}
-              </p>
-
-              <p class="app-timeline-title mb-0">
-                {{ item.name }}
-              </p>
-              <p class="text-disabled mb-0">
-                {{ item.address }}
-              </p>
-            </VTimelineItem>
-          </VTimeline>
-        </VWindowItem>
-      </VWindow>
-    </VCardText>
-  </VCard>
+      </div>
+      <!-- ... (rest of the code) -->
+    </div>
+    <!-- ... (rest of the code) -->
+  </div>
 </template>
+
+<style scoped>
+.container {
+  margin-block: 0;
+  margin-inline: auto;
+  max-inline-size: 1200px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-inline: -15px;
+}
+
+.col-6 {
+  flex: 0 0 50%;
+  max-inline-size: 50%;
+  padding-inline: 15px;
+}
+
+/* Add similar styles for other column sizes */
+
+.form-group {
+  margin-block-end: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: bold;
+  margin-block-end: 0.5rem;
+}
+
+.form-control {
+  display: block;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  background-clip: padding-box;
+  background-color: #fff;
+  color: #495057;
+  font-size: 1rem;
+  inline-size: 100%;
+  line-height: 1.5;
+  padding-block: 0.375rem;
+  padding-inline: 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-select {
+  display: block;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  background-clip: padding-box;
+  background-color: #fff;
+  color: #495057;
+  inline-size: 100%;
+  line-height: 1.5;
+  padding-block: 0.375rem;
+  padding-inline: 0.75rem 1.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Add styles for other form elements similarly */
+
+.btn {
+  display: inline-block;
+  border: 1px solid #007bff;
+  border-radius: 0.25rem;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding-block: 0.375rem;
+  padding-inline: 0.75rem;
+  text-align: center;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  user-select: none;
+  vertical-align: middle;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+/* Add any other necessary styles */
+</style>
